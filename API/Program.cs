@@ -13,7 +13,18 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<FrontDeskDbContext>(options =>
-        options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=FrontDeskDBContext;Trusted_Connection=True;MultipleActiveResultSets=true")); // we can use config file here
+        options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=FrontDeskDBContext;Trusted_Connection=True;MultipleActiveResultSets=true")
+        ); // we can use config file here
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
 
 var app = builder.Build();
 
@@ -29,5 +40,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors();
 
 app.Run();

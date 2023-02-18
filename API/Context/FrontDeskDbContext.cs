@@ -6,9 +6,7 @@ namespace API.Context
     public class FrontDeskDbContext : DbContext
     {
         #region Constructors
-        public FrontDeskDbContext() : base()
-        {
-        }
+       
         public FrontDeskDbContext(DbContextOptions<FrontDeskDbContext> options) : base(options)
         {
         }

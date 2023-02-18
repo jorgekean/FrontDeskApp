@@ -6,39 +6,43 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class BoxStorageStatusController : Controller
+    public class BoxStorageStatusController : BaseController
     {
-        private FrontDeskDbContext _dbContext;
-
-        public BoxStorageStatusController()
+        public BoxStorageStatusController(FrontDeskDbContext dbContext) : base(dbContext)
         {
-            _dbContext = new FrontDeskDbContext();
         }
 
         [HttpPost]
         public IActionResult RecordBoxStorageStatus(BoxStorageStatus boxStorageStatus)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                var storageArea = _dbContext.StorageAreas.FirstOrDefault(s => s.Size == int.Parse(boxStorageStatus.BoxSize));
+
+                if (storageArea != null && storageArea.Available > 0)
+                {
+                    boxStorageStatus.StorageAreaId = storageArea.Id;
+                    storageArea.Available--;
+                    //_dbContext.SaveChanges();
+
+                    _dbContext.BoxStorageStatuses.Add(boxStorageStatus);
+                    _dbContext.SaveChanges();
+
+                    return Ok(boxStorageStatus);
+                }
+                else
+                {
+                    return BadRequest("Not enough space");
+                }
+
             }
-
-            var storageArea = _dbContext.StorageAreas.FirstOrDefault(s => s.Id == boxStorageStatus.StorageAreaId);
-
-            if (storageArea != null && storageArea.Available > 0)
+            catch (Exception ex)
             {
-                storageArea.Available--;
-                _dbContext.SaveChanges();
-
-                _dbContext.BoxStorageStatuses.Add(boxStorageStatus);
-                _dbContext.SaveChanges();
-
-                return Ok(boxStorageStatus);
+                // error logging here
+                throw ex;
             }
-            else
-            {
-                return BadRequest("Not enough space");
-            }
+           
+            return BadRequest();
         }
     }
 

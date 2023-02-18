@@ -9,9 +9,9 @@ namespace ClientConsole.Services
 {
     public static class FrontDeskAppService
     {
-        public static string ApiUrl { get; set; } = "http://localhost:12345/api/";
+        public static string ApiUrl { get; set; } = "https://localhost:7296/";// change port based on your local run
 
-        private static readonly HttpClient _httpClient;
+        private static readonly HttpClient _httpClient = new();
         
         public static async Task<Customer> CreateCustomer()
         {
@@ -26,7 +26,7 @@ namespace ClientConsole.Services
 
             var customer = new Customer { FirstName = firstName, LastName = lastName, PhoneNumber = phoneNumber };
 
-            var response = await _httpClient.PostAsJsonAsync(ApiUrl + "Customer", customer);
+            var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}Customer", customer);
 
             if (response.IsSuccessStatusCode)
             {
@@ -42,7 +42,7 @@ namespace ClientConsole.Services
 
         public static async Task CheckStorageAreaAvailability()
         {
-            Console.Write("Enter box size (Small, Medium, or Large): ");
+            Console.Write("Enter box size ((1 - Small, 2 - Medium, or 3 - Large): ");
             string boxSize = Console.ReadLine();
 
             var response = await _httpClient.GetAsync(ApiUrl + $"StorageArea?boxSize={boxSize}");
@@ -73,18 +73,15 @@ namespace ClientConsole.Services
         public static async Task RecordBoxStorageStatus()
         {
             Console.Write("Enter customer ID: ");
-            int customerId = int.Parse(Console.ReadLine());
+            int customerId = int.Parse(Console.ReadLine());          
 
-            Console.Write("Enter storage area ID: ");
-            int storageAreaId = int.Parse(Console.ReadLine());
-
-            Console.Write("Enter box size (Small, Medium, or Large): ");
+            Console.Write("Enter box size (1 - Small, 2 - Medium, or 3 - Large): ");
             string boxSize = Console.ReadLine();
 
             Console.Write("Enter status (Stored or Retrieved): ");
             string status = Console.ReadLine();
 
-            var boxStorageStatus = new BoxStorageStatus { CustomerId = customerId, StorageAreaId = storageAreaId, BoxSize = boxSize, Status = status, TransactionDate = DateTime.Now };
+            var boxStorageStatus = new BoxStorageStatus { CustomerId = customerId, BoxSize = boxSize, Status = status, TransactionDate = DateTime.Now };
 
             var response = await _httpClient.PostAsJsonAsync(ApiUrl + "BoxStorageStatus", boxStorageStatus);
 

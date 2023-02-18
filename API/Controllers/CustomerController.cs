@@ -6,27 +6,34 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CustomerController : Controller
+    public class CustomerController : BaseController
     {
-        private FrontDeskDbContext _dbContext;
-
-        public CustomerController()
+        public CustomerController(FrontDeskDbContext dbContext) : base(dbContext)
         {
-            _dbContext = new FrontDeskDbContext();
         }
 
         [HttpPost]
         public IActionResult CreateCustomer(Customer customer)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                _dbContext.Customers.Add(customer);
+                _dbContext.SaveChanges();
+
+                return Ok(customer);
+            }
+            catch (Exception ex)
+            {
+                // error logging here
+                throw ex;
             }
 
-            _dbContext.Customers.Add(customer);
-            _dbContext.SaveChanges();
-
-            return Ok(customer);
+            return BadRequest();
         }
     }
 }
