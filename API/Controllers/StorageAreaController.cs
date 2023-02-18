@@ -16,12 +16,12 @@ namespace API.Controllers
         {
             try
             {
-                var storageAreas = _dbContext.StorageAreas.Where(s => s.Size >= boxSize).ToList();
+                var storageAreas = _dbContext.StorageAreas.Where(s => s.Size == boxSize).ToList();
                 return Ok(storageAreas);
             }
             catch (Exception ex)
             {
-
+                // error logging here
                 throw ex;
             }
            
