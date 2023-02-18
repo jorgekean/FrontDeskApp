@@ -1,6 +1,8 @@
 using API.Context;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using API;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,7 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<FrontDeskDbContext>(options =>
-        options.UseSqlServer(Configuration.GetConnectionString("MyConnection")));
+        options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=FrontDeskDBContext;Trusted_Connection=True;MultipleActiveResultSets=true")); // we can use config file here
 
 var app = builder.Build();
 
