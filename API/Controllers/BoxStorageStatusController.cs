@@ -19,11 +19,12 @@ namespace API.Controllers
             {
                 var storageArea = _dbContext.StorageAreas.FirstOrDefault(s => s.Size == int.Parse(boxStorageStatus.BoxSize));
 
+                // if there are available storage area for the requested size, accept it
+                // else tell user there is no available storage area
                 if (storageArea != null && storageArea.Available > 0)
-                {
+                {                    
                     boxStorageStatus.StorageAreaId = storageArea.Id;
-                    storageArea.Available--;
-                    //_dbContext.SaveChanges();
+                    storageArea.Available--;                    
 
                     _dbContext.BoxStorageStatuses.Add(boxStorageStatus);
                     _dbContext.SaveChanges();
